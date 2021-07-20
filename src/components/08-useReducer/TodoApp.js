@@ -2,6 +2,8 @@ import React, { useEffect, useReducer } from 'react';
 import './style.css';
 import { todoReducer } from './todoReducer';
 import { useForm } from '../../hooks/useForm'
+import TodoList from './TodoList';
+import TodoAdd from './TodoAdd';
 
 const initialState = [];
 
@@ -40,27 +42,11 @@ const TodoApp = () => {
         });
     }
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-
-        if (description.trim().length <= 0) {
-            console.log(description);
-            return;
-        }
-
-        const newTodo = {
-            id: new Date().getTime(),
-            desc: description,
-            done: false
-        }
-
-        const action = {
+    const handleAdd = (newTodo) => {
+        dispatch({
             type: 'add',
             payload: newTodo
-        }
-
-        dispatch(action);
-        reset();
+        })
     }
 
     return (
@@ -70,57 +56,18 @@ const TodoApp = () => {
 
             <div className="row">
                 <div className="col-7">
-                    <ul className="list-group list-group-flush">
-                        {
-                            todos.map((todo, index) => {
+                    <TodoList 
+                        todos={todos}
+                        handleToggle={handleToggle}
+                        handleDelete={handleDelete}
+                    />
 
-                                return (
-                                    <li
-                                    className="list-group-item"
-                                    key={todo.id}
-                                >
-                                    <p
-                                        className={`${todo.done && 'complete'}`}
-                                        onClick={() => handleToggle(todo.id)}
-
-                                    > {index + 1}.{todo.desc} </p>
-                                    <button
-                                        className="btn btn-danger"
-                                        onClick={() => handleDelete(todo.id)}
-                                    >
-                                        Borrar
-                                    </button>
-                                </li>
-                                )
-                            })
-                        }
-                    </ul>
                 </div>
 
                 <div className="col-5">
-                    <h4>Agregar TODO</h4>
-                    <hr />
-
-                    <form onSubmit={handleSubmit}>
-                        <input
-                            type="text"
-                            name="description"
-                            className="form-control"
-                            placeholder="Aprender"
-                            autoComplete="off"
-                            onChange={handleInputChange}
-                            value={description}
-
-                        />
-
-                        <button
-                            className="btn btn-outline-primary mt-1 btn-block"
-                            type="submit"
-                        >
-                            Agregar
-                        </button>
-                    </form>
+                    <TodoAdd handleAdd={handleAdd} />
                 </div>
+
             </div>
 
 
